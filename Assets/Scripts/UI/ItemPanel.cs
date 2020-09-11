@@ -48,6 +48,14 @@ public class ItemPanel : MonoBehaviour
 		PlayerPrefs.SetString("lastImagesPath", lastImagesPath);
 	}
 
+	public void DisplayItem(Item item)
+	{
+		nameInput.text = item.name;
+		descritpionInput.text = item.description;
+		pathInput.text = item.imagePath;
+		SetImage(LoadImage(item.imagePath));
+	}
+
 	public Item GetItemFromFields()
 	{
 		if (nameInput == null || string.IsNullOrEmpty(nameInput.text) || string.IsNullOrWhiteSpace(nameInput.text))
@@ -68,12 +76,7 @@ public class ItemPanel : MonoBehaviour
 		if (paths.Length > 0)
 		{
 			lastSaveDataPath = paths[0].Substring(0, paths[0].LastIndexOf('\\'));
-			Item i = ImportItemFromPath(paths[0]);
-
-			nameInput.text = i.name;
-			descritpionInput.text = i.description;
-			pathInput.text = i.imagePath;
-			SetImage(LoadImage(i.imagePath));
+			DisplayItem(ImportItemFromPath(paths[0]));
 		}
 		else
 			Debug.Log("No File Selected");

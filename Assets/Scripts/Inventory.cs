@@ -6,7 +6,7 @@ using System;
 public class Inventory : MonoBehaviour
 {
 
-	public List<ItemSlot> items;
+	public List<InventorySlot> items;
 
 	void Start()
 	{
@@ -20,7 +20,7 @@ public class Inventory : MonoBehaviour
 
 	public void AddItem(Item item)
 	{
-		ItemSlot newItem = new ItemSlot(item);
+		InventorySlot newItem = new InventorySlot(item);
 		items.Add(newItem);
 	}
 
@@ -29,40 +29,40 @@ public class Inventory : MonoBehaviour
 		items.RemoveAt(index);
 	}
 
-	public void RemoveItem(ItemSlot itemSlot)
+	public void RemoveItem(InventorySlot itemSlot)
 	{
 		items.Remove(itemSlot);
 	}
 
 	public void SetAmount(int index, int newAmount)
 	{
-		ItemSlot s = items[index];
+		InventorySlot s = items[index];
 		s.amount++;
 	}
 
-	public void SetAmount(ItemSlot itemSlot, int newAmount)
+	public void SetAmount(InventorySlot itemSlot, int newAmount)
 	{
 		itemSlot.amount = newAmount;
 	}
 
 	public void IncreasAmount(int index)
 	{
-		ItemSlot s = items[index];
+		InventorySlot s = items[index];
 		s.amount++;
 	}
 
-	public void IncreasAmount(ItemSlot itemSlot)
+	public void IncreasAmount(InventorySlot itemSlot)
 	{
 		itemSlot.amount++;
 	}
 
 	[Serializable]
-	public struct ItemSlot
+	public struct InventorySlot
 	{
 		public int amount;
 		public Item item;
 
-		public ItemSlot(Item item)
+		public InventorySlot(Item item)
 		{
 			this.item = item;
 			this.amount = 1;
