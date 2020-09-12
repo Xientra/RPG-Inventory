@@ -19,9 +19,8 @@ public class ItemPanel : MonoBehaviour
 
 	[Header("For Edit Btn:")]
 
-	public Button selectImageBtn;
 	public Button editBtn;
-	public GameObject textEditBgPanel;
+	public GameObject[] setActiveOnEdit;
 
 	[Space(5)]
 
@@ -108,10 +107,10 @@ public class ItemPanel : MonoBehaviour
 		nameInput.interactable = value;
 		descritpionInput.interactable = value;
 
-		selectImageBtn.gameObject.SetActive(value);
 		pathInput.gameObject.SetActive(value);
 
-		textEditBgPanel.SetActive(value);
+		foreach (GameObject go in setActiveOnEdit)
+			go.SetActive(value);
 
 		if (value)
 			editBtn.image.sprite = editBtnFinish;
@@ -180,5 +179,14 @@ public class ItemPanel : MonoBehaviour
 			pathInput.text = paths[0];
 			SetImage(LoadImage(paths[0]));
 		}
+	}
+
+	public void Btn_Clear()
+	{
+		nameInput.text = "";
+		pathInput.text = "";
+		descritpionInput.text = "";
+		itemImage.texture = null;
+		itemImage.rectTransform.localScale = new Vector2(1, 1);
 	}
 }

@@ -61,7 +61,7 @@ public class InventoryPanel : MonoBehaviour
 	{
 		ItemSlot slot = Instantiate(itemSlotExample, contentView).GetComponent<ItemSlot>();
 		slot.Set(index, item, amount);
-		slot.name = itemSlotExample.name + " (" + item.name + ")";
+		slot.name = "[" + item.name + "]";
 		slot.gameObject.SetActive(true);
 	}
 }
