@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -21,5 +22,22 @@ public class ItemSlot : MonoBehaviour
 		nameLabel.text = item.name;
 		this.index = index;
 		amountInput.text = amount.ToString();
+	}
+
+	public string GetName()
+	{
+		return nameLabel.text;
+	}
+
+	public int GetAmount()
+	{
+		return Int32.Parse(amountInput.text);
+	}
+
+	public void Btn_ChangeAmount(int amount)
+	{
+		string newText = (Int32.Parse(amountInput.text) + amount).ToString();
+		if (newText.Length <= amountInput.characterLimit)
+			amountInput.text = newText;
 	}
 }

@@ -1,11 +1,5 @@
 ﻿using System;
-/*
-using UnityEngine;
 
-[CreateAssetMenu(fileName = "Item")]
-[Serializable]
-public class Item : ScriptableObject
-*/
 [Serializable]
 public class Item
 {

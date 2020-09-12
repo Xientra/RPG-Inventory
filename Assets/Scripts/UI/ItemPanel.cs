@@ -64,11 +64,6 @@ public class ItemPanel : MonoBehaviour
 		return new Item(nameInput.text, descritpionInput.text, pathInput.text);
 	}
 
-	public void AddNewItemToInventory(Inventory inventory)
-	{
-		inventory.AddItem(GetItemFromFields());
-	}
-
 	public void ImportItem()
 	{
 		string[] paths = StandaloneFileBrowser.OpenFilePanel("Import", lastSaveDataPath, "json", false);
@@ -127,16 +122,26 @@ public class ItemPanel : MonoBehaviour
 
 	private Texture2D LoadImage(string path)
 	{
-		byte[] byteArray = File.ReadAllBytes(path);
+		try
+		{
+			byte[] byteArray = File.ReadAllBytes(path);
 
-		Texture2D newTex = new Texture2D(2, 2);
-		bool loadingSuccessful = newTex.LoadImage(byteArray);
+			Texture2D newTex = new Texture2D(2, 2);
+			bool loadingSuccessful = newTex.LoadImage(byteArray);
 
-		return loadingSuccessful ? newTex : null;
+			return loadingSuccessful ? newTex : null;
+		}
+		catch
+		{
+			return null;
+		}
 	}
 
 	private void SetImage(Texture2D tex)
 	{
+		if (tex == null)
+			return;
+
 		if (tex.width > tex.height)
 		{
 			float newHeight = ((float)tex.height / (float)tex.width);

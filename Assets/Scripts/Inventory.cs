@@ -8,56 +8,67 @@ public class Inventory : MonoBehaviour
 
 	public List<InventorySlot> items;
 
-	void Start()
-	{
-
-	}
-
-	void Update()
-	{
-
-	}
+	public event Action OnItemAdded;
+	public event Action OnItemRemoved;
+	public event Action<InventorySlot> OnAmountUpdated;
+	public event Action OnOrderUpdated;
 
 	public void AddItem(Item item)
 	{
+		if (items.Exists((s) => s.item.name == item.name))
+		{
+			Debug.Log("Item Allready Exists!");
+			return;
+		}
+
 		InventorySlot newItem = new InventorySlot(item);
 		items.Add(newItem);
+
+		OnItemAdded?.Invoke();
 	}
 
-	public void RemoveItem(int index)
+	public InventorySlot GetSlot(string itemName)
 	{
-		items.RemoveAt(index);
+		return items.FindLast((s) => s.item.name == itemName);
+	}
+	public InventorySlot GetSlot(int index)
+	{
+		return items[index];
 	}
 
-	public void RemoveItem(InventorySlot itemSlot)
+	public void SetAmount(int newAmount, string itemName)
 	{
-		items.Remove(itemSlot);
+		SetAmount(newAmount, GetSlot(itemName));
+	}
+	public void SetAmount(int newAmount, int index)
+	{
+		SetAmount(newAmount, items[index]);
+	}
+	public void SetAmount(int newAmount, InventorySlot slot)
+	{
+		slot.amount = newAmount;
+
+		OnAmountUpdated?.Invoke(slot);
 	}
 
-	public void SetAmount(int index, int newAmount)
+	public void RemoveSlot(string itemName)
 	{
-		InventorySlot s = items[index];
-		s.amount++;
+		RemoveSlot(GetSlot(itemName));
+	}
+	public void RemoveSlot(int index)
+	{
+		RemoveSlot(items[index]);
+	}
+	private void RemoveSlot(InventorySlot slot)
+	{
+		items.Remove(slot);
+		OnItemRemoved?.Invoke();
 	}
 
-	public void SetAmount(InventorySlot itemSlot, int newAmount)
-	{
-		itemSlot.amount = newAmount;
-	}
 
-	public void IncreasAmount(int index)
-	{
-		InventorySlot s = items[index];
-		s.amount++;
-	}
-
-	public void IncreasAmount(InventorySlot itemSlot)
-	{
-		itemSlot.amount++;
-	}
 
 	[Serializable]
-	public struct InventorySlot
+	public class InventorySlot
 	{
 		public int amount;
 		public Item item;
