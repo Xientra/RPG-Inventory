@@ -6,40 +6,25 @@ using UnityEngine;
 
 public class InventoryPanel : MonoBehaviour
 {
-	public Inventory inventory;
+	[Header("External References:")]
 
+	[Tooltip("The Inventory object this UI Panel will change")]
+	public Inventory inventory;
 	public ItemPanel itemPanel;
 
-	public ItemSlot itemSlotExample;
 
+	[Header("Internal References:")]
+
+	public ItemSlot itemSlotExample;
 	public Transform contentView;
 
 	private void Start()
 	{
 		inventory.OnItemAdded += UpdateUI;
 		inventory.OnItemRemoved += UpdateUI;
+		inventory.OnOrderUpdated += UpdateUI;
+		//inventory.OnSlotUpdated += UpdateUI;
 		itemSlotExample.gameObject.SetActive(false);
-	}
-
-	public void Btn_OnItemSlotClick(ItemSlot origin)
-	{
-		itemPanel.DisplayItem(inventory.items[origin.index].item);
-	}
-
-	public void OnAmountChanged(ItemSlot origin)
-	{
-		inventory.SetAmount(origin.GetAmount(), origin.GetName());
-	}
-
-	public void AddItemToInventory()
-	{
-		inventory.AddItem(itemPanel.GetItemFromFields());
-	}
-
-	public void Btn_Remove(ItemSlot origin)
-	{
-		// remove item from inventory
-		inventory.RemoveSlot(origin.nameLabel.text);
 	}
 
 	public void UpdateUI()
@@ -50,6 +35,10 @@ public class InventoryPanel : MonoBehaviour
 		{
 			CreateUIItemSlot(i, inventory.items[i].item, inventory.items[i].amount);
 		}
+	}
+	public void UpdateUI(Inventory.InventorySlot slot)
+	{
+		UpdateUI();
 	}
 
 	private void ClearContentView()
@@ -66,6 +55,50 @@ public class InventoryPanel : MonoBehaviour
 		slot.name = "[" + item.name + "]";
 		slot.gameObject.SetActive(true);
 	}
+
+
+	public void OnAmountChanged(ItemSlot origin)
+	{
+		inventory.SetAmount(origin.GetAmount(), origin.GetName());
+	}
+
+
+	// -========== Buttons ==========- //
+
+	public void Btn_AddItemToInventory()
+	{
+		inventory.AddItem(itemPanel.GetItemFromFields());
+	}
+	public void Btn_UpdateItem()
+	{
+		inventory.UpdateItem(itemPanel.GetItemFromFields());
+	}
+
+
+	public void Btn_Remove(ItemSlot origin)
+	{
+		inventory.RemoveSlot(origin.nameLabel.text);
+	}
+
+	public void Btn_OnItemSlotClick(ItemSlot origin)
+	{
+		itemPanel.DisplayItem(inventory.items[origin.index].item);
+	}
+
+	public void ChangeOrder(ItemSlot origin, int amount)
+	{
+		inventory.MoveSlot(origin.GetName(), amount);
+	}
+
+	public void Btn_MoveUp(ItemSlot origin)
+	{
+		ChangeOrder(origin, -1);
+	}
+	public void Btn_MoveDown(ItemSlot origin)
+	{
+		ChangeOrder(origin, +1);
+	}
+
 
 	public void Btn_ExportItemList()
 	{
@@ -94,6 +127,9 @@ public class InventoryPanel : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Used for exporting and importing a list of items.
+	/// </summary>
 	public class InventoryList
 	{
 		public List<Inventory.InventorySlot> itemSlots;

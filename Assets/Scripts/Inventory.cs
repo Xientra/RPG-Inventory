@@ -10,7 +10,7 @@ public class Inventory : MonoBehaviour
 
 	public event Action OnItemAdded;
 	public event Action OnItemRemoved;
-	public event Action<InventorySlot> OnAmountUpdated;
+	public event Action<InventorySlot> OnSlotUpdated;
 	public event Action OnOrderUpdated;
 
 	public void AddItem(Item item)
@@ -27,9 +27,27 @@ public class Inventory : MonoBehaviour
 		OnItemAdded?.Invoke();
 	}
 
+	public void UpdateItem(Item item)
+	{
+		InventorySlot slot = GetSlot(item.name);
+		if (slot == null)
+		{
+			Debug.Log("Item does not exist");
+			return;
+		}
+
+		slot.item = item;
+
+		OnItemAdded?.Invoke();
+	}
+
 	public void MergeItemLists(List<InventorySlot> list)
 	{
-		items.AddRange(list);
+		foreach (InventorySlot slot in list)
+			if (!items.Exists((s) => s.item.name == slot.item.name))
+				items.Add(slot);
+
+		//items.AddRange(list);
 		
 		OnItemAdded?.Invoke();
 	}
@@ -55,7 +73,7 @@ public class Inventory : MonoBehaviour
 	{
 		slot.amount = newAmount;
 
-		OnAmountUpdated?.Invoke(slot);
+		OnSlotUpdated?.Invoke(slot);
 	}
 
 	public void RemoveSlot(string itemName)
@@ -72,6 +90,20 @@ public class Inventory : MonoBehaviour
 		OnItemRemoved?.Invoke();
 	}
 
+	public void MoveSlot(string itemName, int moveBy)
+	{
+		int oldIndex = items.FindLastIndex((s) => s.item.name == itemName);
+		InventorySlot movingItem = items[oldIndex];
+		items.Remove(movingItem);
+
+		int newIndex = oldIndex + moveBy;
+		// clamp newIndex between 0 and items.Count-1
+		newIndex = newIndex >= items.Count ? items.Count : newIndex < 0 ? 0 : newIndex;
+
+		items.Insert(newIndex, movingItem);
+
+		OnOrderUpdated?.Invoke();
+	}
 
 
 	[Serializable]

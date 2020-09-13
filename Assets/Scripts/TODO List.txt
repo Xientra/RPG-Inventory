@@ -1,13 +1,8 @@
 
-Make items updateable
-
-Make items deleteable
-
-Make item order changeable
+fix fullview
 
 Make the inventory ui update nicer
-
-put change amount functionality in inventory panel
+put change amount functionality from the item slots in inventory panel
 
 check all ui for correct and readable display of information
 
