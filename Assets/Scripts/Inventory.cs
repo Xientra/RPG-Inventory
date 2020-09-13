@@ -27,6 +27,13 @@ public class Inventory : MonoBehaviour
 		OnItemAdded?.Invoke();
 	}
 
+	public void MergeItemLists(List<InventorySlot> list)
+	{
+		items.AddRange(list);
+		
+		OnItemAdded?.Invoke();
+	}
+
 	public InventorySlot GetSlot(string itemName)
 	{
 		return items.FindLast((s) => s.item.name == itemName);

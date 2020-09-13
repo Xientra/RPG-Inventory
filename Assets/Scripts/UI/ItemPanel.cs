@@ -32,27 +32,23 @@ public class ItemPanel : MonoBehaviour
 	public ImageFullscreenPanel imageFullScreenPrefab;
 
 
-	private string lastSaveDataPath;
-	private string lastImagesPath;
-
-	private void Awake()
-	{
-		lastSaveDataPath = PlayerPrefs.GetString("lastSaveDataPath", "");
-		lastImagesPath = PlayerPrefs.GetString("lastImagesPath", "");
-	}
-
-	private void OnDestroy()
-	{
-		PlayerPrefs.SetString("lastSaveDataPath", lastSaveDataPath);
-		PlayerPrefs.SetString("lastImagesPath", lastImagesPath);
-	}
-
 	public void DisplayItem(Item item)
 	{
+		Clear();
+
 		nameInput.text = item.name;
 		descritpionInput.text = item.description;
 		pathInput.text = item.imagePath;
 		SetImage(LoadImage(item.imagePath));
+	}
+
+	public void Clear()
+	{
+		nameInput.text = "";
+		pathInput.text = "";
+		descritpionInput.text = "";
+		itemImage.texture = null;
+		itemImage.rectTransform.localScale = new Vector2(1, 1);
 	}
 
 	public Item GetItemFromFields()
@@ -63,36 +59,15 @@ public class ItemPanel : MonoBehaviour
 		return new Item(nameInput.text, descritpionInput.text, pathInput.text);
 	}
 
-	public void ImportItem()
+	public Item ImportItem(string path)
 	{
-		string[] paths = StandaloneFileBrowser.OpenFilePanel("Import", lastSaveDataPath, "json", false);
-
-		if (paths.Length > 0)
-		{
-			lastSaveDataPath = paths[0].Substring(0, paths[0].LastIndexOf('\\'));
-			DisplayItem(ImportItemFromPath(paths[0]));
-		}
-		else
-			Debug.Log("No File Selected");
+		return JsonUtility.FromJson<Item>(File.ReadAllText(path));
 	}
 
-	public void ExportItem()
+	public void ExportItem(string path, Item item)
 	{
-		Item i = GetItemFromFields();
-
-		string path = StandaloneFileBrowser.SaveFilePanel("Export To", lastSaveDataPath, i.name, "json");
-
-		if (!string.IsNullOrEmpty(path))
-		{
-			lastSaveDataPath = path.Substring(0, path.LastIndexOf('\\'));
-			string jsonItem = JsonUtility.ToJson(i);
-			File.WriteAllText(path, jsonItem);
-		}
-	}
-
-	public Item ImportItemFromPath(string path)
-	{
-		return (Item)JsonUtility.FromJson(File.ReadAllText(path), typeof(Item));
+		string jsonItem = JsonUtility.ToJson(item);
+		File.WriteAllText(path, jsonItem);
 	}
 
 
@@ -156,6 +131,7 @@ public class ItemPanel : MonoBehaviour
 	}
 
 
+	// -========== Button Methods ==========- //
 
 	public void Btn_Edit()
 	{
@@ -171,11 +147,11 @@ public class ItemPanel : MonoBehaviour
 
 	public void Btn_SelectImage()
 	{
-		string[] paths = StandaloneFileBrowser.OpenFilePanel("Open File", lastImagesPath, new ExtensionFilter[] { new ExtensionFilter("Image Files", "png", "jpg", "jpeg", "jiff") }, false);
+		string[] paths = StandaloneFileBrowser.OpenFilePanel("Open File", LastPaths.instance.lastImagesPath, new ExtensionFilter[] { new ExtensionFilter("Image Files", "png", "jpg", "jpeg", "jiff") }, false);
 
 		if (paths.Length == 1)
 		{
-			lastImagesPath = paths[0].Substring(0, paths[0].LastIndexOf('\\'));
+			LastPaths.instance.SetLastImagePath(paths[0]);
 			pathInput.text = paths[0];
 			SetImage(LoadImage(paths[0]));
 		}
@@ -183,10 +159,32 @@ public class ItemPanel : MonoBehaviour
 
 	public void Btn_Clear()
 	{
-		nameInput.text = "";
-		pathInput.text = "";
-		descritpionInput.text = "";
-		itemImage.texture = null;
-		itemImage.rectTransform.localScale = new Vector2(1, 1);
+		Clear();
+	}
+
+	public void Btn_ImportItem()
+	{
+		string[] paths = StandaloneFileBrowser.OpenFilePanel("Import", LastPaths.instance.lastItemDataPath, "json", false);
+
+		if (paths.Length > 0)
+		{
+			LastPaths.instance.SetLastSaveDataPath(paths[0]);
+			DisplayItem(ImportItem(paths[0]));
+		}
+		else
+			Debug.Log("No File Selected");
+	}
+
+	public void Btn_ExportItem()
+	{
+		Item i = GetItemFromFields();
+
+		string path = StandaloneFileBrowser.SaveFilePanel("Export To", LastPaths.instance.lastItemDataPath, i.name, "json");
+
+		if (!string.IsNullOrEmpty(path))
+		{
+			LastPaths.instance.SetLastSaveDataPath(path);
+			ExportItem(path, i);
+		}
 	}
 }

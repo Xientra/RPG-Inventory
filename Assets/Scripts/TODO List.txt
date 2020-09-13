@@ -1,0 +1,16 @@
+
+Make items updateable
+
+Make items deleteable
+
+Make item order changeable
+
+Make the inventory ui update nicer
+
+put change amount functionality in inventory panel
+
+check all ui for correct and readable display of information
+
+
+put it all on a server
+

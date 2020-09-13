@@ -31,12 +31,12 @@ public class ItemSlot : MonoBehaviour
 
 	public int GetAmount()
 	{
-		return Int32.Parse(amountInput.text);
+		return int.Parse(amountInput.text);
 	}
 
 	public void Btn_ChangeAmount(int amount)
 	{
-		string newText = (Int32.Parse(amountInput.text) + amount).ToString();
+		string newText = (int.Parse(amountInput.text) + amount).ToString();
 		if (newText.Length <= amountInput.characterLimit)
 			amountInput.text = newText;
 	}
