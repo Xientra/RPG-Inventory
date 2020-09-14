@@ -74,7 +74,8 @@ public class ItemPanel : MonoBehaviour
 
 	public void OpenImageFullscreen()
 	{
-		Instantiate(imageFullScreenPrefab.gameObject, transform.parent).GetComponent<ImageFullscreenPanel>().SetTexture(itemImage.texture);
+		if (itemImage.texture != null)
+			Instantiate(imageFullScreenPrefab.gameObject, transform.parent).GetComponent<ImageFullscreenPanel>().SetTexture(itemImage.texture);
 	}
 
 	private void SetEditMode(bool value)

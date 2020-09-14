@@ -1,9 +1,19 @@
-﻿using UnityEngine;
+﻿using System.Security.Cryptography;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class ImageFullscreenPanel : MonoBehaviour
 {
+	[SerializeField]
 	private RawImage image;
+
+	Vector2 imgArea;
+
+
+	public void Start()
+	{
+		//imgArea = image.rectTransform.sizeDelta;
+	}
 
 	public void DestroySelf()
 	{
@@ -12,27 +22,34 @@ public class ImageFullscreenPanel : MonoBehaviour
 
 	public void SetTexture(Texture texture)
 	{
-		Vector2 imgArea = image.rectTransform.sizeDelta;
+		imgArea = image.rectTransform.sizeDelta;
+		imgArea = image.canvas.GetComponent<RectTransform>().sizeDelta;
 
 		Vector2 imgRes = new Vector2(texture.width, texture.height);
 
-		/*
-		if (imgArea.
+		float imgAspect = imgRes.x / imgRes.y;
+		float areaAspect = imgArea.x / imgArea.y;
 
+		if (imgAspect < areaAspect)
+		{
+			image.rectTransform.sizeDelta = new Vector2(imgArea.y * imgAspect, imgArea.y);
+		}
+		else if (imgAspect > areaAspect)
+		{
+			image.rectTransform.sizeDelta = new Vector2(imgArea.x, imgArea.x / imgAspect);
+		}
 
-		if (texture.width > texture.height)
-		{
-			float newHeight = ((float)texture.height / (float)texture.width);
-			image.rectTransform.localScale = new Vector2(1, newHeight);
-			
-		}
-		else if (texture.height > texture.width)
-		{
-			float newWidth = ((float)texture.width / (float)texture.height);
-			image.rectTransform.localScale = new Vector2(newWidth, 1);
-		}
-		*/
 
 		image.texture = texture;
+	}
+
+	private void ScaleBasedOnWidth()
+	{
+	
+	}
+
+	private void ScaleBasedOnHHeight()
+	{
+	
 	}
 }

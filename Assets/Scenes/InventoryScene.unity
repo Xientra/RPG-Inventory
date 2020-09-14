@@ -1222,6 +1222,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Image Fullscreen Panel
       objectReference: {fileID: 0}
+    - target: {fileID: 1804667171465775253, guid: 943aa4f10220fc34e9274305720fe66c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 943aa4f10220fc34e9274305720fe66c, type: 3}
 --- !u!224 &162959162 stripped
