@@ -1,19 +1,12 @@
-﻿using System.Security.Cryptography;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class ImageFullscreenPanel : MonoBehaviour
 {
+#pragma warning disable 0649
 	[SerializeField]
 	private RawImage image;
-
-	Vector2 imgArea;
-
-
-	public void Start()
-	{
-		//imgArea = image.rectTransform.sizeDelta;
-	}
+#pragma warning restore 0649
 
 	public void DestroySelf()
 	{
@@ -22,8 +15,7 @@ public class ImageFullscreenPanel : MonoBehaviour
 
 	public void SetTexture(Texture texture)
 	{
-		imgArea = image.rectTransform.sizeDelta;
-		imgArea = image.canvas.GetComponent<RectTransform>().sizeDelta;
+		Vector2 imgArea = image.canvas.GetComponent<RectTransform>().sizeDelta;
 
 		Vector2 imgRes = new Vector2(texture.width, texture.height);
 
@@ -41,15 +33,5 @@ public class ImageFullscreenPanel : MonoBehaviour
 
 
 		image.texture = texture;
-	}
-
-	private void ScaleBasedOnWidth()
-	{
-	
-	}
-
-	private void ScaleBasedOnHHeight()
-	{
-	
 	}
 }

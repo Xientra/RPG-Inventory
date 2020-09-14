@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine.UI;
 using SFB;
 using System.IO;
+using UnityEngine.Networking;
 
 public class ItemPanel : MonoBehaviour
 {
@@ -112,6 +113,33 @@ public class ItemPanel : MonoBehaviour
 		}
 	}
 
+	private IEnumerator SetImageWithURL(string url)
+	{
+		/*
+		WWW www = new WWW(url);
+
+		while (!www.isDone)
+			yield return null;
+		itemImage.texture = www.texture;
+		*/
+		//UnityWebRequest requestTexture = UnityWebRequestTexture.GetTexture(url);
+		using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(url))
+		{
+			yield return uwr.SendWebRequest();
+
+			if (uwr.isNetworkError || uwr.isHttpError)
+			{
+				Debug.Log(uwr.error);
+			}
+			else
+			{
+				// Get downloaded asset bundle
+				Texture2D texture = DownloadHandlerTexture.GetContent(uwr);
+				itemImage.texture = texture;
+			}
+		}
+	}
+
 	private void SetImage(Texture2D tex)
 	{
 		if (tex == null)
@@ -156,6 +184,11 @@ public class ItemPanel : MonoBehaviour
 			pathInput.text = paths[0];
 			SetImage(LoadImage(paths[0]));
 		}
+	}
+
+	public void Btn_SetImageWithURL()
+	{
+		StartCoroutine(SetImageWithURL(pathInput.text));
 	}
 
 	public void Btn_Clear()
