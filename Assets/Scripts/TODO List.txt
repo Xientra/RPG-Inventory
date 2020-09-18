@@ -1,10 +1,19 @@
 
-fix fullview
+
+make item name changeable
+
+make panels movable
+
+make UI scalable / sort out how things scale
+
+message popup
+
 
 Make the inventory ui update nicer
-put change amount functionality from the item slots in inventory panel
+put change amount functionality from the item slots in inventory panel ?
 
-check all ui for correct and readable display of information
+
+
 
 
 put it all on a server
