@@ -2,8 +2,6 @@
 
 make item name changeable
 
-make panels movable
-
 make UI scalable / sort out how things scale
 
 message popup

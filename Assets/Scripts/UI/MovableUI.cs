@@ -1,16 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(RectTransform))]
-public class MovableUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class MovableUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
-	private bool moving = false;
-
 	private RectTransform rectTransform;
+
+	private bool moving = false;
 	private Vector3 offset;
+
 
 	[Tooltip("If checked this RectTransform can only be dragged, when hovering over the handler")]
 	public bool onlyWorkWithHandle = true;
@@ -23,11 +22,13 @@ public class MovableUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 		rectTransform = GetComponent<RectTransform>();
 	}
 
-	private void Update()
+	public void OnDrag(PointerEventData eventData)
 	{
 		if (moving)
 		{
 			rectTransform.position = Input.mousePosition + offset;
+			//rectTransform.position += new Vector3(eventData.delta.x, eventData.delta.y);
+			ClampToScreen(rectTransform);
 		}
 	}
 
@@ -43,5 +44,36 @@ public class MovableUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 	public void OnPointerUp(PointerEventData eventData)
 	{
 		moving = false;
+	}
+
+	private void ClampToScreen(RectTransform t)
+	{
+		float x = Mathf.Clamp(t.anchoredPosition.x, t.sizeDelta.x / 2, -t.sizeDelta.x / 2);
+		float y = Mathf.Clamp(t.anchoredPosition.y, t.sizeDelta.y / 2, -t.sizeDelta.y / 2);
+
+		t.anchoredPosition = new Vector2(x, y);
+	}
+
+	private void ClampToScreenHalf(RectTransform t)
+	{
+		Vector2 rectSize = new Vector2(t.rect.width, t.rect.height) / 2;
+		Vector2 rectDelta = t.sizeDelta / 2;
+
+		float x = Mathf.Clamp(t.anchoredPosition.x, rectDelta.x - rectSize.x, -rectDelta.x + rectSize.x);
+		float y = Mathf.Clamp(t.anchoredPosition.y, rectDelta.y - rectSize.y, -rectDelta.y + rectSize.y);
+
+
+		t.anchoredPosition = new Vector2(x, y);
+	}
+
+	private void ClampToScreenBy(RectTransform t, float pixel)
+	{
+		Vector2 rectSize = new Vector2(t.rect.width, t.rect.height) / 2;
+		Vector2 rectDelta = t.sizeDelta / 2;
+
+		float x = Mathf.Clamp(t.anchoredPosition.x, rectDelta.x - rectSize.x + pixel, -rectDelta.x + rectSize.x - pixel);
+		float y = Mathf.Clamp(t.anchoredPosition.y, rectDelta.y - rectSize.y + pixel, -rectDelta.y + rectSize.y - pixel);
+
+		t.anchoredPosition = new Vector2(x, y);
 	}
 }
