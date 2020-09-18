@@ -1288,11 +1288,11 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 906177384}
-        m_MethodName: OnAmountChanged
+        m_MethodName: Event_OnAmountChanged
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 637007387}
-          m_ObjectArgumentAssemblyTypeName: ItemSlot, Assembly-CSharp
+          m_ObjectArgumentAssemblyTypeName: UIItemSlot, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1422,7 +1422,7 @@ MonoBehaviour:
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 637007387}
-          m_ObjectArgumentAssemblyTypeName: ItemSlot, Assembly-CSharp
+          m_ObjectArgumentAssemblyTypeName: UIItemSlot, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2069,7 +2069,7 @@ MonoBehaviour:
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 637007387}
-          m_ObjectArgumentAssemblyTypeName: ItemSlot, Assembly-CSharp
+          m_ObjectArgumentAssemblyTypeName: UIItemSlot, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2492,7 +2492,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameLabel: {fileID: 748809652}
   amountInput: {fileID: 1206369851}
-  index: -1
+  inventorySlot:
+    amount: 0
+    item:
+      name: 
+      description: 
+      imagePath: 
+    hexColor: 
 --- !u!1 &646060581
 GameObject:
   m_ObjectHideFlags: 0
@@ -3240,7 +3246,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 235.2, y: 1.7899933}
+  m_AnchoredPosition: {x: 235.20001, y: 1.7900085}
   m_SizeDelta: {x: -508.58752, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &906177390
@@ -3663,7 +3669,7 @@ MonoBehaviour:
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 637007387}
-          m_ObjectArgumentAssemblyTypeName: ItemSlot, Assembly-CSharp
+          m_ObjectArgumentAssemblyTypeName: UIItemSlot, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -3827,11 +3833,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 906177384}
-        m_MethodName: OnAmountChanged
+        m_MethodName: Event_OnAmountChanged
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 637007387}
-          m_ObjectArgumentAssemblyTypeName: ItemSlot, Assembly-CSharp
+          m_ObjectArgumentAssemblyTypeName: UIItemSlot, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -5609,11 +5615,11 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 906177384}
-        m_MethodName: OnAmountChanged
+        m_MethodName: Event_OnAmountChanged
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 637007387}
-          m_ObjectArgumentAssemblyTypeName: ItemSlot, Assembly-CSharp
+          m_ObjectArgumentAssemblyTypeName: UIItemSlot, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -6864,8 +6870,8 @@ GameObject:
   - component: {fileID: 2018870607}
   - component: {fileID: 2018870611}
   - component: {fileID: 2018870610}
-  - component: {fileID: 2018870609}
   - component: {fileID: 2018870608}
+  - component: {fileID: 2018870609}
   m_Layer: 5
   m_Name: Display Btn
   m_TagString: Untagged
@@ -6966,7 +6972,7 @@ MonoBehaviour:
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 637007387}
-          m_ObjectArgumentAssemblyTypeName: ItemSlot, Assembly-CSharp
+          m_ObjectArgumentAssemblyTypeName: UIItemSlot, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -7086,7 +7092,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 2019401887}
   m_OnClick:
     m_PersistentCalls:

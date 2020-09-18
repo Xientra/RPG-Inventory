@@ -1,10 +1,12 @@
 
 
+
+
 make item name changeable
 
 make UI scalable / sort out how things scale
 
-message popup
+message popup (singelton)
 
 
 Make the inventory ui update nicer

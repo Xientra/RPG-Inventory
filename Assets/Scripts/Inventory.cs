@@ -13,6 +13,15 @@ public class Inventory : MonoBehaviour
 	public event Action<InventorySlot> OnSlotUpdated;
 	public event Action OnOrderUpdated;
 
+	public void AddItem()
+	{
+		Item emptyItem = new Item("Item Name", "", "");
+		InventorySlot newItem = new InventorySlot(emptyItem);
+		items.Add(newItem);
+
+		OnItemAdded?.Invoke();
+	}
+
 	public void AddItem(Item item)
 	{
 		if (items.Exists((s) => s.item.name == item.name))
@@ -48,7 +57,7 @@ public class Inventory : MonoBehaviour
 				items.Add(slot);
 
 		//items.AddRange(list);
-		
+
 		OnItemAdded?.Invoke();
 	}
 
@@ -84,7 +93,7 @@ public class Inventory : MonoBehaviour
 	{
 		RemoveSlot(items[index]);
 	}
-	private void RemoveSlot(InventorySlot slot)
+	public void RemoveSlot(InventorySlot slot)
 	{
 		items.Remove(slot);
 		OnItemRemoved?.Invoke();
@@ -92,15 +101,19 @@ public class Inventory : MonoBehaviour
 
 	public void MoveSlot(string itemName, int moveBy)
 	{
-		int oldIndex = items.FindLastIndex((s) => s.item.name == itemName);
-		InventorySlot movingItem = items[oldIndex];
-		items.Remove(movingItem);
+		MoveSlot(GetSlot(itemName), moveBy);
+	}
+
+	public void MoveSlot(InventorySlot slot, int moveBy)
+	{
+		int oldIndex = items.IndexOf(slot);
+		items.Remove(slot);
 
 		int newIndex = oldIndex + moveBy;
-		// clamp newIndex between 0 and items.Count-1
+		// clamp newIndex between 0 and items.Count
 		newIndex = newIndex >= items.Count ? items.Count : newIndex < 0 ? 0 : newIndex;
 
-		items.Insert(newIndex, movingItem);
+		items.Insert(newIndex, slot);
 
 		OnOrderUpdated?.Invoke();
 	}
@@ -111,6 +124,7 @@ public class Inventory : MonoBehaviour
 	{
 		public int amount;
 		public Item item;
+		public string hexColor;
 
 		public InventorySlot(Item item)
 		{
@@ -118,5 +132,4 @@ public class Inventory : MonoBehaviour
 			this.amount = 1;
 		}
 	}
-
 }

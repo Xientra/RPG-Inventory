@@ -4,23 +4,36 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ItemSlot : MonoBehaviour
+public class UIItemSlot : MonoBehaviour
 {
 	public TMP_Text nameLabel;
 	public TMP_InputField amountInput;
-	public int index;
 
-	public void Set(int index, Item item)
+	public Inventory.InventorySlot inventorySlot;
+
+
+	public void Set(Inventory.InventorySlot inventorySlot)
+	{
+		this.inventorySlot = inventorySlot;
+		nameLabel.text = inventorySlot.item.name;
+		amountInput.text = inventorySlot.amount.ToString();
+	}
+
+	private void UpdateUI()
+	{
+		nameLabel.text = inventorySlot.item.name;
+		amountInput.text = inventorySlot.amount.ToString();
+	}
+
+	public void Set(Item item)
 	{
 		nameLabel.text = item.name;
-		this.index = index;
 		amountInput.text = "1";
 	}
 
-	public void Set(int index, Item item, int amount)
+	public void Set(Item item, int amount)
 	{
 		nameLabel.text = item.name;
-		this.index = index;
 		amountInput.text = amount.ToString();
 	}
 

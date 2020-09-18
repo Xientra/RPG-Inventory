@@ -15,7 +15,7 @@ public class InventoryPanel : MonoBehaviour
 
 	[Header("Internal References:")]
 
-	public ItemSlot itemSlotExample;
+	public UIItemSlot itemSlotExample;
 	public Transform contentView;
 
 	private void Start()
@@ -33,7 +33,8 @@ public class InventoryPanel : MonoBehaviour
 
 		for (int i = 0; i < inventory.items.Count; i++)
 		{
-			CreateUIItemSlot(i, inventory.items[i].item, inventory.items[i].amount);
+			CreateUIItemSlot(i, inventory.items[i]);
+			//CreateUIItemSlot(i, inventory.items[i].item, inventory.items[i].amount);
 		}
 	}
 	public void UpdateUI(Inventory.InventorySlot slot)
@@ -50,24 +51,35 @@ public class InventoryPanel : MonoBehaviour
 
 	private void CreateUIItemSlot(int index, Item item, int amount)
 	{
-		ItemSlot slot = Instantiate(itemSlotExample, contentView).GetComponent<ItemSlot>();
-		slot.Set(index, item, amount);
+		UIItemSlot slot = Instantiate(itemSlotExample, contentView).GetComponent<UIItemSlot>();
+		slot.Set(item, amount);
 		slot.name = "[" + item.name + "]";
 		slot.gameObject.SetActive(true);
 	}
 
-
-	public void OnAmountChanged(ItemSlot origin)
+	private void CreateUIItemSlot(int index, Inventory.InventorySlot invSlot)
 	{
-		inventory.SetAmount(origin.GetAmount(), origin.GetName());
+		UIItemSlot slot = Instantiate(itemSlotExample, contentView).GetComponent<UIItemSlot>();
+		slot.Set(invSlot);
+		slot.name = "[" + invSlot.item.name + "]";
+		slot.gameObject.SetActive(true);
 	}
 
 
-	// -========== Buttons ==========- //
+
+
+	// -========== Buttons/Events ==========- //
+
+	public void Event_OnAmountChanged(UIItemSlot origin)
+	{
+		inventory.SetAmount(origin.GetAmount(), origin.inventorySlot);
+	}
+
 
 	public void Btn_AddItemToInventory()
 	{
-		inventory.AddItem(itemPanel.GetItemFromFields());
+		inventory.AddItem();
+		//inventory.AddItem(itemPanel.GetItemFromFields());
 	}
 	public void Btn_UpdateItem()
 	{
@@ -75,29 +87,35 @@ public class InventoryPanel : MonoBehaviour
 	}
 
 
-	public void Btn_Remove(ItemSlot origin)
+	public void Btn_Remove(UIItemSlot origin)
 	{
-		inventory.RemoveSlot(origin.nameLabel.text);
+		//inventory.RemoveSlot(origin.nameLabel.text); // using the name
+		inventory.RemoveSlot(origin.inventorySlot);
 	}
 
-	public void Btn_OnItemSlotClick(ItemSlot origin)
+	public void Btn_OnItemSlotClick(UIItemSlot origin)
 	{
-		itemPanel.DisplayItem(inventory.items[origin.index].item);
+		itemPanel.DisplayItem(origin.inventorySlot.item);
 	}
 
-	public void ChangeOrder(ItemSlot origin, int amount)
-	{
-		inventory.MoveSlot(origin.GetName(), amount);
-	}
 
-	public void Btn_MoveUp(ItemSlot origin)
+	public void Btn_MoveUp(UIItemSlot origin)
 	{
 		ChangeOrder(origin, -1);
 	}
-	public void Btn_MoveDown(ItemSlot origin)
+	public void Btn_MoveDown(UIItemSlot origin)
 	{
 		ChangeOrder(origin, +1);
 	}
+	public void ChangeOrder(UIItemSlot origin, int amount)
+	{
+		//inventory.MoveSlot(origin.GetName(), amount); // using the name
+		inventory.MoveSlot(origin.inventorySlot, amount);
+	}
+
+
+
+	// -========== Export and Import ==========- //
 
 
 	public void Btn_ExportItemList()
