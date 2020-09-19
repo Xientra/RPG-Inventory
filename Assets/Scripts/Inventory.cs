@@ -15,7 +15,7 @@ public class Inventory : MonoBehaviour
 
 	public void AddItem()
 	{
-		Item emptyItem = new Item("Item Name", "", "");
+		Item emptyItem = new Item("Empty item", "", "");
 		InventorySlot newItem = new InventorySlot(emptyItem);
 		items.Add(newItem);
 
@@ -24,11 +24,13 @@ public class Inventory : MonoBehaviour
 
 	public void AddItem(Item item)
 	{
+		/*
 		if (items.Exists((s) => s.item.name == item.name))
 		{
 			Debug.Log("Item Allready Exists!");
 			return;
 		}
+		*/
 
 		InventorySlot newItem = new InventorySlot(item);
 		items.Add(newItem);
@@ -36,16 +38,19 @@ public class Inventory : MonoBehaviour
 		OnItemAdded?.Invoke();
 	}
 
-	public void UpdateItem(Item item)
+	public void UpdateItem(Item itemToUpdate, Item newValues)
 	{
-		InventorySlot slot = GetSlot(item.name);
-		if (slot == null)
-		{
-			Debug.Log("Item does not exist");
-			return;
-		}
+		itemToUpdate.name = newValues.name;
+		itemToUpdate.description = newValues.description;
+		itemToUpdate.imagePath = newValues.imagePath;
 
-		slot.item = item;
+		OnItemAdded?.Invoke();
+	}
+	public void UpdateItem(Item itemToUpdate, string newName, string newDescription, string newPath)
+	{
+		itemToUpdate.name = newName;
+		itemToUpdate.description = newDescription;
+		itemToUpdate.imagePath = newPath;
 
 		OnItemAdded?.Invoke();
 	}

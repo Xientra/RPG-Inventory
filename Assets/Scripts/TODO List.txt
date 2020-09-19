@@ -6,6 +6,8 @@ make item name changeable
 
 make UI scalable / sort out how things scale
 
+make UI nicer visually
+
 message popup (singelton)
 
 

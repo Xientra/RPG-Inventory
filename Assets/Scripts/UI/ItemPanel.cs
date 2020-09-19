@@ -13,12 +13,17 @@ public class ItemPanel : MonoBehaviour
 	public TMP_InputField nameInput;
 	public TMP_InputField pathInput;
 	public TMP_InputField descritpionInput;
-
 	[Space(5)]
-
 	public RawImage itemImage;
 
-	[Header("For Edit Btn:")]
+
+	private Item itemOnDisplay;
+	private Inventory inventoryItemFrom;
+
+	/// <summary> Is true if the name input field is not empty and an item can be created. </summary>
+	public bool HasItem { get => !(string.IsNullOrEmpty(nameInput.text) || string.IsNullOrWhiteSpace(nameInput.text)); }
+
+	[Header("Edit Mode:")]
 
 	public Button editBtn;
 	public GameObject[] setActiveOnEdit;
@@ -32,10 +37,12 @@ public class ItemPanel : MonoBehaviour
 
 	public ImageFullscreenPanel imageFullScreenPrefab;
 
-
-	public void DisplayItem(Item item)
+	public void DisplayItem(Item item, Inventory itemFrom)
 	{
 		Clear();
+
+		itemOnDisplay = item;
+		inventoryItemFrom = itemFrom;
 
 		nameInput.text = item.name;
 		descritpionInput.text = item.description;
@@ -43,8 +50,24 @@ public class ItemPanel : MonoBehaviour
 		SetImage(LoadImage(item.imagePath));
 	}
 
+	/// <summary> A shallow update of all text fields, to use when importing an Item </summary>
+	private void DisplayItem(Item item)
+	{
+		itemOnDisplay = item;
+
+		nameInput.text = item.name;
+		descritpionInput.text = item.description;
+		pathInput.text = item.imagePath;
+		itemImage.texture = null;
+		itemImage.rectTransform.localScale = new Vector2(1, 1);
+		SetImage(LoadImage(item.imagePath));
+	}
+
 	public void Clear()
 	{
+		itemOnDisplay = null;
+		inventoryItemFrom = null;
+
 		nameInput.text = "";
 		pathInput.text = "";
 		descritpionInput.text = "";
@@ -52,12 +75,17 @@ public class ItemPanel : MonoBehaviour
 		itemImage.rectTransform.localScale = new Vector2(1, 1);
 	}
 
-	public Item GetItemFromFields()
+	public Item CreateItemFromFields()
 	{
 		if (nameInput == null || string.IsNullOrEmpty(nameInput.text) || string.IsNullOrWhiteSpace(nameInput.text))
 			throw new ArgumentException("Item name must not be empty or whitespace.");
 
 		return new Item(nameInput.text, descritpionInput.text, pathInput.text);
+	}
+
+	private void UpdateItemFromFields()
+	{
+		inventoryItemFrom.UpdateItem(itemOnDisplay, nameInput.text, descritpionInput.text, pathInput.text);
 	}
 
 	public Item ImportItem(string path)
@@ -70,7 +98,6 @@ public class ItemPanel : MonoBehaviour
 		string jsonItem = JsonUtility.ToJson(item);
 		File.WriteAllText(path, jsonItem);
 	}
-
 
 
 	public void OpenImageFullscreen()
@@ -115,14 +142,6 @@ public class ItemPanel : MonoBehaviour
 
 	private IEnumerator SetImageWithURL(string url)
 	{
-		/*
-		WWW www = new WWW(url);
-
-		while (!www.isDone)
-			yield return null;
-		itemImage.texture = www.texture;
-		*/
-		//UnityWebRequest requestTexture = UnityWebRequestTexture.GetTexture(url);
 		using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(url))
 		{
 			yield return uwr.SendWebRequest();
@@ -139,12 +158,21 @@ public class ItemPanel : MonoBehaviour
 			}
 		}
 	}
+	[Obsolete]
+	private IEnumerator SetImageWithWWW(string url)
+	{
+		WWW www = new WWW(url);
+
+		while (!www.isDone)
+			yield return null;
+		itemImage.texture = www.texture;
+	}
 
 	private void SetImage(Texture2D tex)
 	{
 		if (tex == null)
 			return;
-
+		itemImage.rectTransform.localScale = new Vector2(1, 1);
 		if (tex.width > tex.height)
 		{
 			float newHeight = ((float)tex.height / (float)tex.width);
@@ -171,6 +199,8 @@ public class ItemPanel : MonoBehaviour
 		else if (nameInput.interactable == true && descritpionInput.interactable == true)
 		{
 			SetEditMode(false);
+			if (inventoryItemFrom != null)
+				UpdateItemFromFields();
 		}
 	}
 
@@ -184,6 +214,12 @@ public class ItemPanel : MonoBehaviour
 			pathInput.text = paths[0];
 			SetImage(LoadImage(paths[0]));
 		}
+	}
+
+	public void Btn_ClearImage()
+	{
+		itemImage.texture = null;
+		itemImage.rectTransform.localScale = new Vector2(1, 1);
 	}
 
 	public void Btn_SetImageWithURL()
@@ -211,7 +247,7 @@ public class ItemPanel : MonoBehaviour
 
 	public void Btn_ExportItem()
 	{
-		Item i = GetItemFromFields();
+		Item i = CreateItemFromFields();
 
 		string path = StandaloneFileBrowser.SaveFilePanel("Export To", LastPaths.instance.lastItemDataPath, i.name, "json");
 

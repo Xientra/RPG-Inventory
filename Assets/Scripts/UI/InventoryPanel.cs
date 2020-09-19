@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 using UnityEngine;
 
 public class InventoryPanel : MonoBehaviour
@@ -17,6 +18,7 @@ public class InventoryPanel : MonoBehaviour
 
 	public UIItemSlot itemSlotExample;
 	public Transform contentView;
+	public Transform addItemButtonSpace;
 
 	private void Start()
 	{
@@ -29,23 +31,25 @@ public class InventoryPanel : MonoBehaviour
 
 	public void UpdateUI()
 	{
-		ClearContentView();
+		ClearUIItemSlots();
 
 		for (int i = 0; i < inventory.items.Count; i++)
 		{
 			CreateUIItemSlot(i, inventory.items[i]);
 			//CreateUIItemSlot(i, inventory.items[i].item, inventory.items[i].amount);
 		}
+
+		addItemButtonSpace.SetAsLastSibling();
 	}
 	public void UpdateUI(Inventory.InventorySlot slot)
 	{
 		UpdateUI();
 	}
 
-	private void ClearContentView()
+	private void ClearUIItemSlots()
 	{
 		foreach (Transform t in contentView)
-			if (t.gameObject.activeSelf == true)
+			if (t.gameObject.activeSelf == true && t.CompareTag("UI Item Slot"))
 				Destroy(t.gameObject);
 	}
 
@@ -78,14 +82,11 @@ public class InventoryPanel : MonoBehaviour
 
 	public void Btn_AddItemToInventory()
 	{
-		inventory.AddItem();
-		//inventory.AddItem(itemPanel.GetItemFromFields());
+		if (itemPanel.HasItem)
+			inventory.AddItem(itemPanel.CreateItemFromFields());
+		else
+			inventory.AddItem();
 	}
-	public void Btn_UpdateItem()
-	{
-		inventory.UpdateItem(itemPanel.GetItemFromFields());
-	}
-
 
 	public void Btn_Remove(UIItemSlot origin)
 	{
@@ -93,9 +94,15 @@ public class InventoryPanel : MonoBehaviour
 		inventory.RemoveSlot(origin.inventorySlot);
 	}
 
+	public void Btn_Duplicate(UIItemSlot origin)
+	{
+		//inventory.RemoveSlot(origin.inventorySlot);
+		Debug.LogWarning("Does not work and i am too lazy to make it work.");
+	}
+
 	public void Btn_OnItemSlotClick(UIItemSlot origin)
 	{
-		itemPanel.DisplayItem(origin.inventorySlot.item);
+		itemPanel.DisplayItem(origin.inventorySlot.item, inventory);
 	}
 
 
