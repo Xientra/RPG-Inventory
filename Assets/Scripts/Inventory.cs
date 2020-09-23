@@ -57,11 +57,12 @@ public class Inventory : MonoBehaviour
 
 	public void MergeItemLists(List<InventorySlot> list)
 	{
+		/*
 		foreach (InventorySlot slot in list)
 			if (!items.Exists((s) => s.item.name == slot.item.name))
 				items.Add(slot);
-
-		//items.AddRange(list);
+		*/
+		items.AddRange(list);
 
 		OnItemAdded?.Invoke();
 	}

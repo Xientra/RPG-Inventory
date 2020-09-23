@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using SFB;
 using System.IO;
 using UnityEngine.Networking;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 public class ItemPanel : MonoBehaviour
 {
@@ -37,6 +38,7 @@ public class ItemPanel : MonoBehaviour
 
 	public ImageFullscreenPanel imageFullScreenPrefab;
 
+
 	public void DisplayItem(Item item, Inventory itemFrom)
 	{
 		Clear();
@@ -53,6 +55,8 @@ public class ItemPanel : MonoBehaviour
 	/// <summary> A shallow update of all text fields, to use when importing an Item </summary>
 	private void DisplayItem(Item item)
 	{
+		if (item == null)
+			return;
 		itemOnDisplay = item;
 
 		nameInput.text = item.name;
@@ -75,10 +79,18 @@ public class ItemPanel : MonoBehaviour
 		itemImage.rectTransform.localScale = new Vector2(1, 1);
 	}
 
+	private bool ValidName(string name)
+	{
+		return !(string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name));
+	}
+
 	public Item CreateItemFromFields()
 	{
-		if (nameInput == null || string.IsNullOrEmpty(nameInput.text) || string.IsNullOrWhiteSpace(nameInput.text))
-			throw new ArgumentException("Item name must not be empty or whitespace.");
+		if (!ValidName(nameInput.text))
+		{
+			PopupWindow.Create(PopupWindow.nameEmptyOrWhiteSpaceErrorMsg);
+			return null;
+		}
 
 		return new Item(nameInput.text, descritpionInput.text, pathInput.text);
 	}
@@ -90,7 +102,13 @@ public class ItemPanel : MonoBehaviour
 
 	public Item ImportItem(string path)
 	{
-		return JsonUtility.FromJson<Item>(File.ReadAllText(path));
+		Item import = JsonUtility.FromJson<Item>(File.ReadAllText(path));
+		if (!ValidName(import.name))
+		{
+			PopupWindow.Create(PopupWindow.importFailedErrorMsg);
+			return null;
+		}
+		return import;
 	}
 
 	public void ExportItem(string path, Item item)
@@ -136,6 +154,8 @@ public class ItemPanel : MonoBehaviour
 		}
 		catch
 		{
+			if (!(string.IsNullOrEmpty(path) || string.IsNullOrWhiteSpace(path)))
+				PopupWindow.Create(PopupWindow.imageLoadingFailedErrorMsg);
 			return null;
 		}
 	}
@@ -154,7 +174,7 @@ public class ItemPanel : MonoBehaviour
 			{
 				// Get downloaded asset bundle
 				Texture2D texture = DownloadHandlerTexture.GetContent(uwr);
-				itemImage.texture = texture;
+				SetImage(texture);
 			}
 		}
 	}
@@ -198,6 +218,11 @@ public class ItemPanel : MonoBehaviour
 		}
 		else if (nameInput.interactable == true && descritpionInput.interactable == true)
 		{
+			if (itemOnDisplay != null && !ValidName(nameInput.text))
+			{
+				PopupWindow.Create(PopupWindow.nameEmptyOrWhiteSpaceErrorMsg);
+				return;
+			}
 			SetEditMode(false);
 			if (inventoryItemFrom != null)
 				UpdateItemFromFields();
@@ -218,6 +243,7 @@ public class ItemPanel : MonoBehaviour
 
 	public void Btn_ClearImage()
 	{
+		pathInput.text = "";
 		itemImage.texture = null;
 		itemImage.rectTransform.localScale = new Vector2(1, 1);
 	}
@@ -241,13 +267,13 @@ public class ItemPanel : MonoBehaviour
 			LastPaths.instance.SetLastSaveDataPath(paths[0]);
 			DisplayItem(ImportItem(paths[0]));
 		}
-		else
-			Debug.Log("No File Selected");
 	}
 
 	public void Btn_ExportItem()
 	{
 		Item i = CreateItemFromFields();
+		if (i == null)
+			return;
 
 		string path = StandaloneFileBrowser.SaveFilePanel("Export To", LastPaths.instance.lastItemDataPath, i.name, "json");
 

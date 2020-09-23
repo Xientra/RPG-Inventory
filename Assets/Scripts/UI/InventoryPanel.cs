@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using UnityEngine;
 
@@ -127,6 +128,12 @@ public class InventoryPanel : MonoBehaviour
 
 	public void Btn_ExportItemList()
 	{
+		if (!inventory.items.Any())
+		{
+			PopupWindow.Create("Inventory is empty.");
+			return;
+		}
+
 		string path = StandaloneFileBrowser.SaveFilePanel("Export To", LastPaths.instance.lastItemListPath, "ItemList", "json");
 
 		if (!string.IsNullOrEmpty(path))
@@ -148,6 +155,11 @@ public class InventoryPanel : MonoBehaviour
 			LastPaths.instance.SetLastItemListPath(paths[0]);
 
 			InventoryList importObj = JsonUtility.FromJson<InventoryList>(File.ReadAllText(paths[0]));
+			if (!importObj.itemSlots.Any())
+			{
+				PopupWindow.Create(PopupWindow.importFailedErrorMsg);
+				return;
+			}
 			inventory.MergeItemLists(importObj.itemSlots);
 		}
 	}
